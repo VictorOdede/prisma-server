@@ -1,0 +1,56 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+enum Role {
+    USER
+    ADMIN
+}
+
+model User {
+    id                Int           @id @default(autoincrement())
+    sacco             String
+    email             String        @unique
+    vehicles          Vehicle[]
+    businessShortcode Int           @unique
+    role              Role          @default(USER)
+    Transaction       Transaction[]
+}
+
+model Payer {
+    id           Int           @id @default(autoincrement())
+    createdAt    DateTime      @default(now())
+    phone        String        @unique
+    transactions Transaction[]
+}
+
+model Vehicle {
+    id           String        @id @default(uuid())
+    registration String        @unique
+    passengers   Int
+    phone        String        @unique
+    owner        User          @relation(fields: [ownerId], references: [id])
+    ownerId      Int
+    transactions Transaction[]
+}
+
+model Transaction {
+    id              Int      @id @default(autoincrement())
+    amount          Int
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    mpesaId         String?  @unique
+    sender          Payer    @relation(fields: [senderNumber], references: [phone])
+    senderNumber    String
+    recepient       Vehicle  @relation(fields: [recepientNumber], references: [phone])
+    recepientNumber String
+    mySacco         User     @relation(fields: [paybill], references: [businessShortcode])
+    paybill         Int
+    success         Boolean  @default(false)
+
+}
