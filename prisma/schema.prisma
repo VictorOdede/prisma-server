@@ -9,23 +9,25 @@ generator client {
 
 enum Role {
     USER
+    PAYER
     ADMIN
 }
 
-model User {
+model Owner {
     id                Int           @id @default(autoincrement())
-    sacco             String
+    sacco             String        @unique
     email             String        @unique
     vehicles          Vehicle[]
     businessShortcode Int           @unique
     role              Role          @default(USER)
-    Transaction       Transaction[]
+    transaction       Transaction[]
 }
 
 model Payer {
     id           Int           @id @default(autoincrement())
     createdAt    DateTime      @default(now())
     phone        String        @unique
+    role         Role          @default(PAYER)
     transactions Transaction[]
 }
 
@@ -34,8 +36,8 @@ model Vehicle {
     registration String        @unique
     passengers   Int
     phone        String        @unique
-    owner        User          @relation(fields: [ownerId], references: [id])
-    ownerId      Int
+    myOwner      Owner         @relation(fields: [ownerSacco], references: [sacco])
+    ownerSacco   String
     transactions Transaction[]
 }
 
@@ -49,7 +51,7 @@ model Transaction {
     senderNumber    String
     recepient       Vehicle  @relation(fields: [recepientNumber], references: [phone])
     recepientNumber String
-    mySacco         User     @relation(fields: [paybill], references: [businessShortcode])
+    mySacco         Owner    @relation(fields: [paybill], references: [businessShortcode])
     paybill         Int
     success         Boolean  @default(false)
 

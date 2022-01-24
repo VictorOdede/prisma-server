@@ -22,7 +22,7 @@ async function sendMessage(matatuPhone, sentAmount, senderNumber) {
     console.log(result);
   } catch(err) {
     console.error(err);
-  } };
+  }};
   
 module.exports = { sendMessage }
 

@@ -1,35 +1,28 @@
 const request = require("request");
 const btoa = require('btoa');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const { format } = require('date-fns');
+
 
 const myUrl = "https://lipa.network/hooks/mpesa";
 const myTestUrl = "https://534a-105-163-1-158.ngrok.io/hooks/mpesa";
 
 
 // create timestamp
-function pad (n) {
-  return n<10 ? '0'+n : n
-}
-
-function getTime(){
-var currentDate = new Date();
-var year = currentDate.getFullYear();
-var month = pad(currentDate.getMonth());
-var day = pad(currentDate.getDate());
-var hour = pad(currentDate.getHours());
-var minute = pad(currentDate.getMinutes());
-var second = pad(currentDate.getSeconds());
-
-return `${year}${month}${day}${hour}${minute}${second}`
-}
+const getTime = () => {
+  let currentDate = format(new Date(), 'yMMdHHmmss');
+  return currentDate;
+} 
 
 
 // create passcode
-
 function getPass(businessShortcode){
-const passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+const passKey = process.env.PASSKEY;
 
-var pass_code = `${businessShortcode}${passkey}${timeNow}`;
+var pass_code = `${businessShortcode}${passKey}${timeNow}`;
 
 // encode the passcode to base64
 var encodedPass = btoa(pass_code);
