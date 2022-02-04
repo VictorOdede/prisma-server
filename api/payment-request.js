@@ -7,9 +7,9 @@ const { sendMessage } = require("./send-sms");
 async function paymentRequest(sent_amount, sender_number, matatu_reg, businessShortcode) {
   
   // test data
-  var amount = 1;
-  var sender = 254716305157;
-  var matatu = "KAD 123w";
+  // var amount = 1;
+  // var sender = 254716305157;
+  // var matatu = "KAD 123w";
 
   amount = sent_amount;
   sender = sender_number;

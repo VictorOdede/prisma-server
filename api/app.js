@@ -2,7 +2,8 @@ const { PrismaClient }  = require ('@prisma/client');
 const express = require ('express');
 const prettyjson = require ('prettyjson');
 const mpesaStkCallback = require ('./stk-callback');
-const paymentRequest = require('./payment-request');
+const {paymentRequest} = require('./payment-request');
+const bodyParser = require('body-parser');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -11,6 +12,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const port = process.env.PORT;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+const options = {
+    noColor: true,
+  };
 
 
 app.get('/', (req, res) => {
@@ -36,7 +44,7 @@ app.post("/hooks/mpesa", async (req, res) => {
 
 
 
-app.post("api/transaction", async (req, res) => {
+app.post("/api/transaction", async (req, res) => {
     console.log("--new transaction--")
 
     // log the req data
@@ -54,15 +62,18 @@ app.post("api/transaction", async (req, res) => {
 
 
     // create transaction item on prisma
+    const mySender = sender.toString();
+
     const newTransaction = await prisma.transaction.create({
         data: {
             amount,
-            sender,
-            matatu,
-            paybill,
+            senderNumber: mySender,
+            recepientPlate: matatu,
+            success: true
         }
     })
-    res.json(newTransaction);    
+    console.log(`${newTransaction.id}`);
+    // res.json(newTransaction);    
 })
 
 // update prisma transaction item

@@ -6,7 +6,7 @@ const userData = [
     {
         sacco: "My Sacco",
         email: "mysacco@mail.com",
-        paybill: 12345,
+        businessShortcode: "174379",
         vehicles: {
             create: [
                 {
@@ -25,14 +25,22 @@ const userData = [
     }
 ]
 
+const payerData = {
+    phone: "254716305157"
+}
+
 async function main() {
     let u;
     for (u of userData){
-        let user = await prisma.user.create({
+        let user = await prisma.owner.create({
             data: u
         })
         console.log(`created user with id: ${user.id}`)
-    }  
+    }
+    // let payingUser = await prisma.payer.create({
+    //     data: payerData
+    // })  
+    // console.log(`${payingUser.id}`);
 }
 
 main().catch((err) => {

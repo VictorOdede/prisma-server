@@ -8,21 +8,21 @@ const { format } = require('date-fns');
 
 
 const myUrl = "https://lipa.network/hooks/mpesa";
-const myTestUrl = "https://534a-105-163-1-158.ngrok.io/hooks/mpesa";
+const myTestUrl = "https://10c0-105-163-1-111.ngrok.io/hooks/mpesa";
 
 
 // create timestamp
 const getTime = () => {
-  let currentDate = format(new Date(), 'yMMdHHmmss');
+  let currentDate = format(new Date(), 'yMMDDHHmmss');
   return currentDate;
 } 
 
 
 // create passcode
-function getPass(businessShortcode){
+function getPass(businessShortcode, timestamp){
 const passKey = process.env.PASSKEY;
 
-var pass_code = `${businessShortcode}${passKey}${timeNow}`;
+var pass_code = `${businessShortcode}${passKey}${timestamp}`;
 
 // encode the passcode to base64
 var encodedPass = btoa(pass_code);
@@ -31,10 +31,10 @@ return encodedPass;
 
 
 // pass variables to mpesa function send request to M-Pesa API
-function mpesaRequest(token, sent_amount, sender_number, matatu_ref, shortcode) {
+async function mpesaRequest(token, sent_amount, sender_number, matatu_ref, shortcode) {
 
   let timeNow = getTime();  
-  let myPass = getPass(shortcode);
+  let myPass = getPass(shortcode, timeNow);
 
   var options = {
     method: "POST",

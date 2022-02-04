@@ -8,8 +8,7 @@ generator client {
 }
 
 enum Role {
-    USER
-    PAYER
+    OWNER
     ADMIN
 }
 
@@ -18,8 +17,8 @@ model Owner {
     sacco             String        @unique
     email             String        @unique
     vehicles          Vehicle[]
-    businessShortcode Int           @unique
-    role              Role          @default(USER)
+    businessShortcode String        @unique
+    role              Role          @default(OWNER)
     transaction       Transaction[]
 }
 
@@ -27,7 +26,6 @@ model Payer {
     id           Int           @id @default(autoincrement())
     createdAt    DateTime      @default(now())
     phone        String        @unique
-    role         Role          @default(PAYER)
     transactions Transaction[]
 }
 
@@ -36,23 +34,21 @@ model Vehicle {
     registration String        @unique
     passengers   Int
     phone        String        @unique
-    myOwner      Owner         @relation(fields: [ownerSacco], references: [sacco])
+    myOwner      Owner         @relation(fields: [ownerSacco], references: [businessShortcode])
     ownerSacco   String
     transactions Transaction[]
 }
 
 model Transaction {
-    id              Int      @id @default(autoincrement())
-    amount          Int
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
-    mpesaId         String?  @unique
-    sender          Payer    @relation(fields: [senderNumber], references: [phone])
-    senderNumber    String
-    recepient       Vehicle  @relation(fields: [recepientNumber], references: [phone])
-    recepientNumber String
-    mySacco         Owner    @relation(fields: [paybill], references: [businessShortcode])
-    paybill         Int
-    success         Boolean  @default(false)
-
+    id             Int      @id @default(autoincrement())
+    amount         Int
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+    sender         Payer    @relation(fields: [senderNumber], references: [phone])
+    senderNumber   String
+    recepient      Vehicle  @relation(fields: [recepientPlate], references: [registration])
+    recepientPlate String
+    success        Boolean  @default(false)
+    Owner          Owner?   @relation(fields: [ownerId], references: [id])
+    ownerId        Int?
 }

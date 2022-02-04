@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const credentials = { 
-    apiKey: process.env.APIKEY, 
+    apiKey: process.env.API_KEY, 
     username: process.env.USERNAME
 }
 
