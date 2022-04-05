@@ -1,11 +1,9 @@
 const { PrismaClient }  = require ('@prisma/client');
 const {formatMpesaStkObject} = require('./format-stk');
 const {transactionStatus} = require('./transactionStatus');
-// const {business_id} = require('./payment-request');
-
 
 const prisma = new PrismaClient();
-const business_id = "965482e4-73a8-4fb7-9199-d622aff9fc9e"
+
     
 const mpesaStkCallback = async (data, businessID) => {
 

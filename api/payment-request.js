@@ -1,17 +1,11 @@
 const { tokenRequest } = require("./token-request");
 const { mpesaRequest } = require("./mpesa-request");
-const { sendMessage } = require("./send-sms");
 const dotenv = require("dotenv");
-const {transactionStatus} = require("./transactionStatus");
 const { PrismaClient }  = require ('@prisma/client');
 
 const prisma = new PrismaClient();
 
-
 dotenv.config();
-
-
-
 
 // Use async function to allow time to resolve
 async function paymentRequest(sent_amount, sender_number, account_name) {
@@ -52,11 +46,13 @@ async function paymentRequest(sent_amount, sender_number, account_name) {
   const newPayer = await prisma.payer.create({data:
     {
       phone: sender_number_str
-  }})
+  },
+  select: {
+    phone: true
+  }
+})
   console.log(newPayer);
   }
-
-  
 
   // if transaction is successful, send text message to business number
   // await sendMessage(matatu_phone, sent_amount, sender_number);

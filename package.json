@@ -17,7 +17,6 @@
     "@prisma/migrate": "^3.8.1",
     "@prisma/sdk": "^3.8.1",
     "africastalking": "^0.5.4",
-    "apollo-server": "^3.6.2",
     "body-parser": "^1.19.1",
     "btoa": "^1.2.1",
     "date-fns": "^2.28.0",

@@ -1,5 +1,4 @@
 const request = require("request");
-const btoa = require('btoa');
 const dotenv = require('dotenv');
 const {getTime, getPass} = require('./mpesa-request');
 const { tokenRequest } = require("./token-request");
