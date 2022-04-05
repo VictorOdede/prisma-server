@@ -8,47 +8,43 @@ generator client {
 }
 
 enum Role {
-    OWNER
+    USER
     ADMIN
 }
 
-model Owner {
-    id                Int           @id @default(autoincrement())
-    sacco             String        @unique
-    email             String        @unique
-    vehicles          Vehicle[]
-    businessShortcode String        @unique
-    role              Role          @default(OWNER)
-    transaction       Transaction[]
+model Business {
+    id            String        @id @default(uuid())
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    businessName  String
+    email         String
+    phone         String
+    accountType   String
+    accountNumber String
+    role          Role          @default(USER)
+    transactions  Transaction[]
 }
 
 model Payer {
     id           Int           @id @default(autoincrement())
     createdAt    DateTime      @default(now())
+    firstName    String        @default("")
+    lastName     String        @default("")
     phone        String        @unique
-    transactions Transaction[]
-}
-
-model Vehicle {
-    id           String        @id @default(uuid())
-    registration String        @unique
-    passengers   Int
-    phone        String        @unique
-    myOwner      Owner         @relation(fields: [ownerSacco], references: [businessShortcode])
-    ownerSacco   String
+    role         Role          @default(USER)
     transactions Transaction[]
 }
 
 model Transaction {
-    id             Int      @id @default(autoincrement())
-    amount         Int
-    createdAt      DateTime @default(now())
-    updatedAt      DateTime @updatedAt
-    sender         Payer    @relation(fields: [senderNumber], references: [phone])
-    senderNumber   String
-    recepient      Vehicle  @relation(fields: [recepientPlate], references: [registration])
-    recepientPlate String
-    success        Boolean  @default(false)
-    Owner          Owner?   @relation(fields: [ownerId], references: [id])
-    ownerId        Int?
+    id            String   @id @default(uuid())
+    amount        String
+    transactionID String   @unique
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    sender        Payer    @relation(fields: [senderNumber], references: [phone])
+    senderNumber  String
+    recepient     Business @relation(fields: [recepientID], references: [id])
+    recepientID   String
+    success       Boolean  @default(false)
+
 }

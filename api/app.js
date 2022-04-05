@@ -1,9 +1,10 @@
 const { PrismaClient }  = require ('@prisma/client');
 const express = require ('express');
 const prettyjson = require ('prettyjson');
-const mpesaStkCallback = require ('./stk-callback');
+const {mpesaStkCallback} = require ('./stk-callback');
 const {paymentRequest} = require('./payment-request');
 const bodyParser = require('body-parser');
+
 
 const prisma = new PrismaClient();
 const app = express();
@@ -18,7 +19,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 const options = {
     noColor: true,
-  };
+};
+
+var business_id;
 
 
 app.get('/', (req, res) => {
@@ -30,14 +33,12 @@ app.get('/', (req, res) => {
 // create webhook endpoint to receive webhooks from Safaricom
 app.post("/hooks/mpesa", async (req, res) => {
   
-    console.log("----Received M-Pesa webhook----");
+    console.log("---------Received M-Pesa webhook---------");
   
     // format and dump the request payload received from safaricom to the terminal
     console.log(prettyjson.render(req.body, options));
 
-    mpesaStkCallback(req.body); 
-
-  
+    mpesaStkCallback(req.body, business_id);  
     // respond to safaricom server with success message
     res.status(200).send();
 })
@@ -45,36 +46,38 @@ app.post("/hooks/mpesa", async (req, res) => {
 
 
 app.post("/api/transaction", async (req, res) => {
-    console.log("--new transaction--")
+    console.log("------------new transaction------------")
 
     // log the req data
     console.log(prettyjson.render(req.body));
 
-    const {amount, sender, matatu, paybill} = req.body;
+    const {amount, sender, businessID, businessName } = req.body;
+    business_id=businessID;
 
     // call mpesa api & send response to client
     if(amount>0){
-        paymentRequest(amount, sender, matatu, paybill);
+        paymentRequest(amount, sender, businessName);
         res.status(202).send();
     }else{
         res.status(400).send();
     }
 
 
-    // create transaction item on prisma
-    const mySender = sender.toString();
 
-    const newTransaction = await prisma.transaction.create({
-        data: {
-            amount,
-            senderNumber: mySender,
-            recepientPlate: matatu,
-            success: true
-        }
-    })
-    console.log(`${newTransaction.id}`);
+    // const newTransaction = await prisma.transaction.create({
+    //     data: {
+    //         amount,
+    //         senderNumber: mySender,
+    //         recepientPlate: account_id,
+    //         success: true
+    //     }
+    // })
+
+    // console.log(`${newTransaction.id}`);
     // res.json(newTransaction);    
 })
+
+
 
 // update prisma transaction item
 app.put('api/transaction/:id', async (req, res) => {
@@ -89,7 +92,7 @@ app.put('api/transaction/:id', async (req, res) => {
 
 app.listen(port, () => {
     try{
-        console.log(`Listening on port ${port} `)
+        console.log(`Listening on port ${port}... `)
     } 
     catch(err){
         console.log(err)

@@ -1,32 +1,66 @@
 const { tokenRequest } = require("./token-request");
 const { mpesaRequest } = require("./mpesa-request");
 const { sendMessage } = require("./send-sms");
+const dotenv = require("dotenv");
+const {transactionStatus} = require("./transactionStatus");
+const { PrismaClient }  = require ('@prisma/client');
+
+const prisma = new PrismaClient();
+
+
+dotenv.config();
+
+
 
 
 // Use async function to allow time to resolve
-async function paymentRequest(sent_amount, sender_number, matatu_reg, businessShortcode) {
+async function paymentRequest(sent_amount, sender_number, account_name) {
   
-  // test data
-  // var amount = 1;
-  // var sender = 254716305157;
-  // var matatu = "KAD 123w";
+  const apiKey = process.env.MPESA_API_KEY;
+  const apiSecret = process.env.MPESA_API_SECRET;
 
-  amount = sent_amount;
-  sender = sender_number;
-  matatu = matatu_reg;
-  paybill = businessShortcode;
 
   // Wait for token to resolve 
-  var newToken = await tokenRequest();
+  const newToken = await tokenRequest(apiKey, apiSecret);
 
   // Call the mpesa payment request and pass the access token
-  var myRequest = await mpesaRequest(newToken, amount, sender, matatu, paybill);
+  const myRequest = await mpesaRequest(newToken, sent_amount, sender_number, account_name);
 
   // sort the return data from mpesa API                      
   console.log(myRequest);
 
-  // if transaction is successful, send text message to matatu number
-  //   await sendMessage(matatu_phone, sent_amount, sender_number);
+  // request transaction status
+  const sender_number_str = sender_number.toString();
+  // const sender_number_str = "0716305158";
+
+  var numberExist;
+  
+  //query to see if sender_number exists in db 
+  numberExist = await prisma.payer.findUnique({
+    where: {
+      phone: sender_number_str,
+    },
+    select: {
+      phone: true,
+    }
+  })
+
+  console.log(numberExist)
+
+  if (numberExist === null){
+  // add number to db
+  const newPayer = await prisma.payer.create({data:
+    {
+      phone: sender_number_str
+  }})
+  console.log(newPayer);
+  }
+
+  
+
+  // if transaction is successful, send text message to business number
+  // await sendMessage(matatu_phone, sent_amount, sender_number);
+
 }
 
 
