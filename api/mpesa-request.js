@@ -8,7 +8,7 @@ const { format } = require('date-fns');
 
 
 const myUrl = "https://lipa.network/hooks/mpesa";
-const myTestUrl = "https://9c26-105-163-1-187.ngrok.io/hooks/mpesa";
+const myTestUrl = "https://2eea-41-80-98-114.ngrok.io/hooks/mpesa";
 
 
 // create timestamp

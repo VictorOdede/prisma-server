@@ -16,16 +16,16 @@ async function paymentRequest(sent_amount, sender_number, account_name) {
 
   // Wait for token to resolve 
   const newToken = await tokenRequest(apiKey, apiSecret);
+  console.log(newToken);
 
   // Call the mpesa payment request and pass the access token
   const myRequest = await mpesaRequest(newToken, sent_amount, sender_number, account_name);
-
-  // sort the return data from mpesa API                      
+                 
   console.log(myRequest);
+
 
   // request transaction status
   const sender_number_str = sender_number.toString();
-  // const sender_number_str = "0716305158";
 
   var numberExist;
   

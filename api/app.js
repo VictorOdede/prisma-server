@@ -24,12 +24,6 @@ const options = {
 var business_id;
 
 
-app.get('/', (req, res) => {
-    res.send(`Hello world on port ${port}`)
-})
-
-
-
 // create webhook endpoint to receive webhooks from Safaricom
 app.post("/hooks/mpesa", async (req, res) => {
   
@@ -44,37 +38,25 @@ app.post("/hooks/mpesa", async (req, res) => {
 })
 
 
-
+// enpoint for receiving payment request from client
 app.post("/api/transaction", async (req, res) => {
     console.log("------------new transaction------------")
 
     // log the req data
     console.log(prettyjson.render(req.body));
 
-    const {amount, sender, businessID, businessName } = req.body;
+    const {amountSent, sender, businessID, businessName } = req.body;
+
     business_id=businessID;
 
     // call mpesa api & send response to client
-    if(amount>0){
-        paymentRequest(amount, sender, businessName);
+    if(amountSent>0){
+        paymentRequest(amountSent, sender, businessName);
         res.status(202).send();
     }else{
         res.status(400).send();
     }
 
-
-
-    // const newTransaction = await prisma.transaction.create({
-    //     data: {
-    //         amount,
-    //         senderNumber: mySender,
-    //         recepientPlate: account_id,
-    //         success: true
-    //     }
-    // })
-
-    // console.log(`${newTransaction.id}`);
-    // res.json(newTransaction);    
 })
 
 
