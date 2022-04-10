@@ -20,6 +20,7 @@ async function paymentRequest(sent_amount, sender_number, account_name) {
 
   // Call the mpesa payment request and pass the access token
   const myRequest = await mpesaRequest(newToken, sent_amount, sender_number, account_name);
+  
                  
   console.log(myRequest);
 

@@ -49,6 +49,8 @@ app.post("/api/transaction", async (req, res) => {
 
     business_id=businessID;
 
+    // business_id = "965482e4-73a8-4fb7-9199-d622aff9fc9e"
+
     // call mpesa api & send response to client
     if(amountSent>0){
         paymentRequest(amountSent, sender, businessName);
